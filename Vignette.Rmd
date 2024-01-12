@@ -1,5 +1,5 @@
 ---
-title: \sf TRPS1 Cholesterol Analysis Vignette 
+title: \sf ER Antagonist Analysis Vignette 
 header-includes:
 - \usepackage{color}
 - \usepackage{float}
@@ -33,7 +33,7 @@ pre[class] {
 
 # Introduction
 
-This is an analysis vignette accompanying the manuscript entitled "TRPS1 represses transcription of cholesterol biosynthesis genes and is associated with blood cholesterol traits." The reader should be able to follow these steps to download the raw data and reproduce all the results in the manuscript.  
+This is an analysis vignette accompanying the manuscript entitled "ER antagonists." The reader should be able to follow these steps to download the raw data and reproduce all the results in the manuscript.  
 
 # Test
 
