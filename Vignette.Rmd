@@ -37,7 +37,7 @@ This is an analysis vignette accompanying the manuscript entitled "ER antagonist
 
 # Test
 
-Test!
+Test
 
 ## Test
 
