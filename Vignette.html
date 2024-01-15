@@ -700,7 +700,7 @@ function toggle_visibility(id1) {
 
 
 <h1 class="title toc-ignore">ER Antagonist Analysis Vignette</h1>
-<h4 class="date">Last compiled on 12 January 2024</h4>
+<h4 class="date">Last compiled on 15 January 2024</h4>
 
 </div>
 
@@ -708,10 +708,19 @@ function toggle_visibility(id1) {
 <div id="TOC">
 <ul>
 <li><a href="#introduction" id="toc-introduction"><span class="toc-section-number">1</span> Introduction</a></li>
-<li><a href="#test" id="toc-test"><span class="toc-section-number">2</span> Test</a>
+<li><a href="#pro-seq" id="toc-pro-seq"><span class="toc-section-number">2</span> PRO-seq</a>
 <ul>
-<li><a href="#test-1" id="toc-test-1"><span class="toc-section-number">2.1</span> Test</a></li>
+<li><a href="#download-the-raw-data-and-rename-the-files" id="toc-download-the-raw-data-and-rename-the-files"><span class="toc-section-number">2.1</span> Download the raw data and rename the files</a></li>
+<li><a href="#pre-process-the-reads" id="toc-pre-process-the-reads"><span class="toc-section-number">2.2</span> Pre-process the reads</a></li>
+<li><a href="#differential-expression-analysis" id="toc-differential-expression-analysis"><span class="toc-section-number">2.3</span> Differential expression analysis</a></li>
 </ul></li>
+<li><a href="#atac-seq" id="toc-atac-seq"><span class="toc-section-number">3</span> ATAC-seq</a>
+<ul>
+<li><a href="#pre-process" id="toc-pre-process"><span class="toc-section-number">3.1</span> Pre-process</a></li>
+<li><a href="#differential-accessibility-analysis" id="toc-differential-accessibility-analysis"><span class="toc-section-number">3.2</span> Differential accessibility analysis</a></li>
+<li><a href="#de-novo-motif-identification" id="toc-de-novo-motif-identification"><span class="toc-section-number">3.3</span> de novo motif identification</a></li>
+</ul></li>
+<li><a href="#integrative-analysis" id="toc-integrative-analysis"><span class="toc-section-number">4</span> Integrative analysis</a></li>
 </ul>
 </div>
 
@@ -735,14 +744,645 @@ max-height: 600px;
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p>This is an analysis vignette accompanying the manuscript entitled “ER antagonists.” The reader should be able to follow these steps to download the raw data and reproduce all the results in the manuscript.</p>
 </div>
-<div id="test" class="section level1" number="2">
-<h1><span class="header-section-number">2</span> Test</h1>
-<p>Test</p>
-<div id="test-1" class="section level2" number="2.1">
-<h2><span class="header-section-number">2.1</span> Test</h2>
-<p>Test</p>
-<pre class="bash"><code>Test</code></pre>
+<div id="pro-seq" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> PRO-seq</h1>
+<div id="download-the-raw-data-and-rename-the-files" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Download the raw data and rename the files</h2>
+<pre class="bash"><code>for i in {59..62}
+do
+  sbatch -p standard -A gioeli_lab -t 1:00:00 -N 1 -n 1 --cpus-per-task=10 --job-name fasterq-dump \
+    -o logs/SRR273165${i}_fasterq_dump.log \
+    --wrap=&quot;module load gcc/11.4.0 sratoolkit/3.0.3; fasterq-dump SRR273165${i}&quot;
+  sleep 1
+done
+
+mv SRR27316559_1.fastq T47D_Starved_DMSO_rep1_PE1.fastq
+mv SRR27316559_2.fastq T47D_Starved_DMSO_rep1_PE2.fastq
+mv SRR27316560_1.fastq T47D_Starved_DMSO_rep2_PE1.fastq
+mv SRR27316560_2.fastq T47D_Starved_DMSO_rep2_PE2.fastq
+mv SRR27316561_1.fastq T47D_Starved_Estrogen_rep1_PE1.fastq
+mv SRR27316561_2.fastq T47D_Starved_Estrogen_rep1_PE2.fastq
+mv SRR27316562_1.fastq T47D_Starved_Estrogen_rep2_PE1.fastq
+mv SRR27316562_2.fastq T47D_Starved_Estrogen_rep2_PE2.fastq
+
+for i in {65..72}
+do
+  sbatch -p standard -A gioeli_lab -t 1:00:00 -N 1 -n 1 --cpus-per-task=10 --job-name fasterq-dump \
+    -o logs/SRR273165${i}_fasterq_dump.log \
+    --wrap=&quot;module load gcc/11.4.0 sratoolkit/3.0.3; fasterq-dump SRR273165${i}&quot;
+  sleep 1
+done
+
+mv SRR27316565_1.fastq T47D_Complete_Tamoxifen_rep2_PE1.fastq
+mv SRR27316565_2.fastq T47D_Complete_Tamoxifen_rep2_PE2.fastq
+mv SRR27316566_1.fastq T47D_Complete_Tamoxifen_rep1_PE1.fastq
+mv SRR27316566_2.fastq T47D_Complete_Tamoxifen_rep1_PE2.fastq
+mv SRR27316567_1.fastq T47D_Complete_Raloxifene_rep2_PE1.fastq
+mv SRR27316567_2.fastq T47D_Complete_Raloxifene_rep2_PE2.fastq
+mv SRR27316568_1.fastq T47D_Complete_Raloxifene_rep1_PE1.fastq
+mv SRR27316568_2.fastq T47D_Complete_Raloxifene_rep1_PE2.fastq
+mv SRR27316569_1.fastq T47D_Complete_Fulvestrant_rep2_PE1.fastq
+mv SRR27316569_2.fastq T47D_Complete_Fulvestrant_rep2_PE2.fastq
+mv SRR27316570_1.fastq T47D_Complete_Fulvestrant_rep1_PE1.fastq
+mv SRR27316570_2.fastq T47D_Complete_Fulvestrant_rep1_PE2.fastq
+mv SRR27316571_1.fastq T47D_Complete_DMSO_rep2_PE1.fastq
+mv SRR27316571_2.fastq T47D_Complete_DMSO_rep2_PE2.fastq
+mv SRR27316572_1.fastq T47D_Complete_DMSO_rep1_PE1.fastq
+mv SRR27316572_2.fastq T47D_Complete_DMSO_rep1_PE2.fastq</code></pre>
 </div>
+<div id="pre-process-the-reads" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Pre-process the reads</h2>
+<p>For the initial basic pre-processing steps, we used a pipeline we have thoroughly described elsewhere (<a href="https://github.com/guertinlab/Nascent_RNA_Methods" class="uri">https://github.com/guertinlab/Nascent_RNA_Methods</a>). Please see the above GitHub repository for detailed explanations of the steps, as well as software dependencies and preprocessing steps (e.g., gene annotation file downloads).</p>
+</div>
+<div id="differential-expression-analysis" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Differential expression analysis</h2>
+<p>Set up in R.</p>
+<pre class="r bg-info"><code>library(lattice)
+library(DESeq2)
+library(tidyverse)
+library(latticeExtra)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(data.table)
+library(clusterProfiler)
+library(DEGreport)
+
+plot.ma.lattice &lt;- function(ma.df, filename = &#39;file.name&#39;, p = 0.01, 
+                            title.main = &quot;Differential PRO Expression&quot;,log2fold = 0.5) {
+  pdf(paste(&quot;MA_plot_&quot;, filename, &quot;.pdf&quot;, sep=&#39;&#39;), width=3.83, height=3.83)
+  print(xyplot(ma.df$log2FoldChange ~ log(ma.df$baseMean, base=10),
+    groups=(ma.df$padj &lt; p &amp; abs(ma.df$log2FoldChange) &gt; log2fold &amp; !is.na(ma.df$padj)),
+    col=c(&quot;grey40&quot;,&quot;red&quot;), main=title.main, scales=&quot;free&quot;, aspect=1, pch=20, cex=0.25,
+    ylab=expression(&quot;log&quot;[2]~&quot;PRO fold change&quot;), xlab=expression(&quot;log&quot;[10]~&quot;Mean of Normalized Counts&quot;),
+    par.settings=list(par.xlab.text=list(cex=1.1,font=2), par.ylab.text=list(cex=1.1,font=2))))
+  dev.off()
+}
+
+plotPCAlattice &lt;- function(df, file = &#39;PCA_lattice.pdf&#39;, reps = 3) {
+  perVar = round(100 * attr(df, &quot;percentVar&quot;))
+  #identical replicate color, transparency difference
+  if (reps == 2) {
+    colpal = sort(c(rainbow(nrow(df)/2, start = 0.01, end = 0.8, alpha = 0.9),
+    rainbow(nrow(df)/2, start = 0.01, end = 0.8, alpha = 0.7)))
+  }
+  if (reps == 3) {
+    colpal = sort(c(rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.9),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.7),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.5)))
+  }
+  if (reps == 4) {
+    colpal = sort(c(rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.9),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.75),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.60),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.45)))
+  }
+  if (reps == 5) {
+    colpal = sort(c(rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.9),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.75),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.60),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.45),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.30)))
+  }
+  if (reps == 6) {
+    colpal = sort(c(rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.9),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.75),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.60),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.45),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.30),
+    rainbow(nrow(df)/3, start = 0.01, end = 0.8, alpha = 0.15)))
+  }
+  df$group = gsub(&#39;_&#39;, &#39; &#39;, df$group)
+  pdf(file, width=7, height=3.5, useDingbats=FALSE)
+  print(xyplot(PC2 ~ PC1, groups = group, data=df,
+  xlab = paste(&#39;PC1: &#39;, perVar[1], &#39;% variance&#39;, sep = &#39;&#39;),
+  ylab = paste(&#39;PC2: &#39;, perVar[2], &#39;% variance&#39;, sep = &#39;&#39;),
+  par.settings = list(superpose.symbol = list(pch = c(20), col=colpal)),
+  pch = 20,
+  auto.key = TRUE,
+  col = colpal))
+  dev.off()
+}
+
+direc = &#39;/Users/TScott/Library/CloudStorage/Box-Box/GuertinLab/ER_Antagonists_R/&#39;
+setwd(direc)
+
+fdr = 0.1
+log2fold = 0.0</code></pre>
+<p>Identify differentially-expressed genes.</p>
+<pre class="r bg-info"><code>df.T47D = read.table(&quot;Estrogen_treatment_PRO_gene_counts.txt&quot;, sep = &#39;\t&#39;, header = TRUE)
+rownames(df.T47D) = df.T47D[,1]
+df.T47D = df.T47D[,seq(2,to=ncol(df.T47D),by=2)]
+
+sample.conditions = factor(sapply(strsplit(sapply(strsplit(colnames(df.T47D), &#39;T47D_&#39;), &#39;[&#39;, 2), &#39;_rep&#39;), &#39;[&#39;, 1),
+                           levels = c(&quot;Starved_DMSO&quot;, &quot;Starved_Estrogen&quot;, 
+                                      &quot;Complete_DMSO&quot;, &quot;Complete_Tamoxifen&quot;, 
+                                      &quot;Complete_Raloxifene&quot;, &quot;Complete_Fulvestrant&quot;))     
+
+deseq.counts.table = DESeqDataSetFromMatrix(df.T47D, DataFrame(sample.conditions), ~ sample.conditions)
+colData(deseq.counts.table)$condition&lt;-colnames(df.T47D)
+dds = DESeq(deseq.counts.table)</code></pre>
+<p>Plot MA.</p>
+<pre class="r bg-info"><code>res.deseq = results(dds, contrast=c(&quot;sample.conditions&quot;, &quot;Starved_Estrogen&quot;, &quot;Starved_DMSO&quot;))
+plot.ma.lattice(res.deseq, filename = &quot;Estrogen_treatment&quot;, p = 0.05,log2fold = 0.0)</code></pre>
+<p>Plot PCA.</p>
+<pre class="r bg-info"><code>rld_T47D = rlogTransformation(dds)
+x = plotPCA(rld_T47D, intgroup=&quot;condition&quot;, returnData=TRUE)
+plotPCAlattice(x, file = paste0(direc, &#39;PCA_T47D_lattice_guertin.pdf&#39;), reps = 2)</code></pre>
+<p>Plot fulvestrant fold changes for estrogen-activated genes</p>
+<pre class="r bg-info"><code>estrogen_activated = rownames(res.deseq[res.deseq$padj &lt; fdr &amp; 
+                                          !is.na(res.deseq$padj) &amp; 
+                                          res.deseq$log2FoldChange &gt; log2fold,])
+
+res.deseq = results(dds, contrast=c(&quot;sample.conditions&quot;, &quot;Complete_Fulvestrant&quot;, &quot;Complete_DMSO&quot;))
+
+fulvestrant_repressed = rownames(res.deseq[res.deseq$padj &lt; fdr &amp; 
+                                             !is.na(res.deseq$padj) &amp; 
+                                             res.deseq$log2FoldChange &lt; log2fold,])
+
+length(estrogen_activated) #817
+length(fulvestrant_repressed) #203
+length(fulvestrant_repressed %in% estrogen_activated) #203
+
+pdf(paste0(direc, &quot;Hist_fulvestrant_fold_change_estrogen_activated_genes.pdf&quot;), 
+    useDingbats = FALSE, height = 7, width = 14)
+hist(res.deseq$log2FoldChange[rownames(res.deseq) %in% estrogen_activated], 
+    breaks = 100, main = &quot;Fulvestrant effects on estrogen-activated genes&quot;, xlab = &quot;Log(2) fold change&quot;)
+dev.off()</code></pre>
+<p>Cluster estrogen-activated genes.</p>
+<pre class="r bg-info"><code>res.deseq = results(dds, contrast=c(&quot;sample.conditions&quot;, &quot;Starved_Estrogen&quot;, &quot;Starved_DMSO&quot;))
+estrogen_activated = rownames(res.deseq[res.deseq$padj &lt; 0.01 &amp; 
+                                          !is.na(res.deseq$padj) &amp; 
+                                          res.deseq$log2FoldChange &gt; log2fold,])
+
+dds.lrt = DESeq(dds, test=&quot;LRT&quot;, reduced = ~ 1)
+res.lrt = results(dds.lrt)
+rld = rlogTransformation(dds.lrt)
+rld_mat &lt;- assay(rld)
+cluster_rlog = rld_mat[rownames(rld_mat) %in% estrogen_activated,]
+meta = as.data.frame(sample.conditions)
+rownames(meta) = colnames(cluster_rlog)
+clusters_lrt &lt;- degPatterns(cluster_rlog, metadata = meta, time = &quot;sample.conditions&quot;, minc = 50)
+
+pdf(&quot;Estrogen_Activated_Clustering_50_fdr_0.01.pdf&quot;, width = 14)
+clusters_lrt$plot
+dev.off()</code></pre>
+</div>
+</div>
+<div id="atac-seq" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> ATAC-seq</h1>
+<div id="pre-process" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Pre-process</h2>
+<p>Download the raw data and rename the files.</p>
+<pre class="bash"><code>cd /Volumes/External/Users/TScott/ER_Antagonists/210628_ATAC/
+
+for i in {36..59}
+do
+  fasterq-dump SRR273165${i}
+  sleep 1
+done
+
+mv SRR27316539_1.fastq T47D_Starved_Estrogen_rep1_PE1.fastq
+mv SRR27316539_2.fastq T47D_Starved_Estrogen_rep1_PE2.fastq
+mv SRR27316538_1.fastq T47D_Starved_Estrogen_rep2_PE1.fastq
+mv SRR27316538_2.fastq T47D_Starved_Estrogen_rep2_PE2.fastq
+mv SRR27316537_1.fastq T47D_Starved_Estrogen_rep3_PE1.fastq
+mv SRR27316537_2.fastq T47D_Starved_Estrogen_rep3_PE2.fastq
+mv SRR27316536_1.fastq T47D_Starved_Estrogen_rep4_PE1.fastq
+mv SRR27316536_2.fastq T47D_Starved_Estrogen_rep4_PE2.fastq
+
+mv SRR27316543_1.fastq T47D_Starved_DMSO_rep1_PE1.fastq
+mv SRR27316543_2.fastq T47D_Starved_DMSO_rep1_PE2.fastq
+mv SRR27316542_1.fastq T47D_Starved_DMSO_rep2_PE1.fastq
+mv SRR27316542_2.fastq T47D_Starved_DMSO_rep2_PE2.fastq
+mv SRR27316541_1.fastq T47D_Starved_DMSO_rep3_PE1.fastq
+mv SRR27316541_2.fastq T47D_Starved_DMSO_rep3_PE2.fastq
+mv SRR27316540_1.fastq T47D_Starved_DMSO_rep4_PE1.fastq
+mv SRR27316540_2.fastq T47D_Starved_DMSO_rep4_PE2.fastq
+
+mv SRR27316547_1.fastq T47D_Complete_Tamoxifen_rep1_PE1.fastq
+mv SRR27316547_2.fastq T47D_Complete_Tamoxifen_rep1_PE2.fastq
+mv SRR27316546_1.fastq T47D_Complete_Tamoxifen_rep2_PE1.fastq
+mv SRR27316546_2.fastq T47D_Complete_Tamoxifen_rep2_PE2.fastq
+mv SRR27316545_1.fastq T47D_Complete_Tamoxifen_rep3_PE1.fastq
+mv SRR27316545_2.fastq T47D_Complete_Tamoxifen_rep3_PE2.fastq
+mv SRR27316544_1.fastq T47D_Complete_Tamoxifen_rep4_PE1.fastq
+mv SRR27316544_2.fastq T47D_Complete_Tamoxifen_rep4_PE2.fastq
+
+mv SRR27316551_1.fastq T47D_Complete_Raloxifene_rep1_PE1.fastq
+mv SRR27316551_2.fastq T47D_Complete_Raloxifene_rep1_PE2.fastq
+mv SRR27316550_1.fastq T47D_Complete_Raloxifene_rep2_PE1.fastq
+mv SRR27316550_2.fastq T47D_Complete_Raloxifene_rep2_PE2.fastq
+mv SRR27316549_1.fastq T47D_Complete_Raloxifene_rep3_PE1.fastq
+mv SRR27316549_2.fastq T47D_Complete_Raloxifene_rep3_PE2.fastq
+mv SRR27316548_1.fastq T47D_Complete_Raloxifene_rep4_PE1.fastq
+mv SRR27316548_2.fastq T47D_Complete_Raloxifene_rep4_PE2.fastq
+
+mv SRR27316555_1.fastq T47D_Complete_Fulvestrant_rep1_PE1.fastq
+mv SRR27316555_2.fastq T47D_Complete_Fulvestrant_rep1_PE2.fastq
+mv SRR27316554_1.fastq T47D_Complete_Fulvestrant_rep2_PE1.fastq
+mv SRR27316554_2.fastq T47D_Complete_Fulvestrant_rep2_PE2.fastq
+mv SRR27316553_1.fastq T47D_Complete_Fulvestrant_rep3_PE1.fastq
+mv SRR27316553_2.fastq T47D_Complete_Fulvestrant_rep3_PE2.fastq
+mv SRR27316552_1.fastq T47D_Complete_Fulvestrant_rep4_PE1.fastq
+mv SRR27316552_2.fastq T47D_Complete_Fulvestrant_rep4_PE2.fastq
+
+mv SRR27316559_1.fastq T47D_Complete_DMSO_rep1_PE1.fastq
+mv SRR27316559_2.fastq T47D_Complete_DMSO_rep1_PE2.fastq
+mv SRR27316558_1.fastq T47D_Complete_DMSO_rep2_PE1.fastq
+mv SRR27316558_2.fastq T47D_Complete_DMSO_rep2_PE2.fastq
+mv SRR27316557_1.fastq T47D_Complete_DMSO_rep3_PE1.fastq
+mv SRR27316557_2.fastq T47D_Complete_DMSO_rep3_PE2.fastq
+mv SRR27316556_1.fastq T47D_Complete_DMSO_rep4_PE1.fastq
+mv SRR27316556_2.fastq T47D_Complete_DMSO_rep4_PE2.fastq</code></pre>
+<p>Pre-process the reads to get to peaks and a counts table.</p>
+<pre class="bash"><code>wget https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz
+gunzip ENCFF356LFX.bed.gz
+mv ENCFF356LFX.bed hg38.blacklist.bed
+
+hg38=&quot;/Users/TScott/Box/GuertinLab/hg38&quot;
+
+for fq in *_PE1.fastq.gz
+do
+    name=$(echo $fq | awk -F&quot;_PE1.fastq.gz&quot; &#39;{print $1}&#39;)
+    echo $name
+    gunzip $fq
+    gunzip ${name}_PE2.fastq.gz
+    conda activate cutadaptenv
+    (cutadapt --cores=0 -m 10 -O 1 -a CTGTCTCTTATACACATCT ${name}_PE1.fastq -o ${name}_PE1_no_adapt.fastq) &gt; ${name}_PE1_cutadapt.log
+    (cutadapt --cores=0 -m 10 -O 1 -a CTGTCTCTTATACACATCT ${name}_PE2.fastq -o ${name}_PE2_no_adapt.fastq) &gt; ${name}_PE2_cutadapt.log
+    conda deactivate
+    fastq_pair ${name}_PE1_no_adapt.fastq ${name}_PE2_no_adapt.fastq
+    gzip ${name}_PE1_no_adapt.fastq
+    gzip ${name}_PE2_no_adapt.fastq
+    gzip ${name}_PE1_no_adapt.fastq.paired.fq
+    gzip ${name}_PE2_no_adapt.fastq.paired.fq
+    bowtie2 -p 6 --maxins 800 -x ${hg38}/hg38 -1 ${name}_PE1_no_adapt.fastq.paired.fq.gz -2 ${name}_PE2_no_adapt.fastq.paired.fq.gz 2&gt;${name}_bowtie2.log | samtools view -b - | samtools sort -n - | samtools fixmate -m - - | samtools sort - | samtools markdup -r - $name.bam
+    samtools view -bh -f 0x2 ${name}.bam &gt; ${name}_concordant.bam
+    seqOutBias ${hg38}/hg38.fa ${name}_concordant.bam --skip-bed --no-scale --bw=${name}.bigWig --only-paired --shift-counts --read-size=65
+done
+
+for bam in *_rep1_concordant.bam
+do
+    name=$(echo $bam | awk -F&quot;_rep1_concordant.bam&quot; &#39;{print $1}&#39;)
+    echo $name
+    macs2 callpeak -t ${name}_rep1_concordant.bam ${name}_rep2_concordant.bam ${name}_rep3_concordant.bam ${name}_rep4_concordant.bam -f BAMPE -n $name -g hs -B --trackline 2&gt; ${name}_macs2.log 
+    bedtools subtract -a ${name}_summits.bed -b hg38.blacklist.bed &gt; ${name}_summits_bl_removed.bed
+done
+
+cat *_summits_bl_removed.bed &gt; T47D_peaks.bed
+slopBed -l 99 -r 100 -i T47D_peaks.bed -g ~/Box/GuertinLab/MCF7/hg38.chrom.sizes &gt; T47D_peaks_summit_window.bed
+sortBed -i T47D_peaks_summit_window.bed &gt; T47D_peaks_summit_window_sorted.bed
+mergeBed -i T47D_peaks_summit_window_sorted.bed &gt; T47D_peaks_summit_window_merged.bed</code></pre>
+</div>
+<div id="differential-accessibility-analysis" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Differential accessibility analysis</h2>
+<pre class="r bg-info"><code>direc = &#39;/Volumes/External/Users/TScott/ER_Antagonists/210628_ATAC/&#39;
+
+library(DESeq2)
+library(lattice)
+library(bigWig)
+
+setwd(direc)
+
+get.raw.counts.interval &lt;- function(df, path.to.bigWig, file.prefix = &#39;M&#39;) {
+  df = df[,1:3]
+  vec.names = c()
+  inten.df=data.frame(matrix(ncol = 0, nrow = nrow(df)))
+  for (mod.bigWig in Sys.glob(file.path(path.to.bigWig,
+                                        paste(file.prefix, &quot;*.bigWig&quot;, sep =&#39;&#39;)))) {
+    factor.name = strsplit(strsplit(mod.bigWig, &quot;/&quot;)[[1]][length(strsplit(mod.bigWig, &quot;/&quot;)[[1]])], &#39;\\.&#39;)[[1]][1]
+    print(factor.name)
+    vec.names = c(vec.names, factor.name)
+    loaded.bw = load.bigWig(mod.bigWig)
+    mod.inten = bed.region.bpQuery.bigWig(loaded.bw, df)
+    inten.df = cbind(inten.df, mod.inten)
+  }
+  colnames(inten.df) = vec.names
+  r.names = paste(df[,1], &#39;:&#39;, df[,2], &#39;-&#39;, df[,3], sep=&#39;&#39;)
+  row.names(inten.df) = r.names
+  return(inten.df)
+}
+
+T47D.ATAC.peaks &lt;- read.table(&quot;T47D_peaks_summit_window_merged.bed&quot;)
+
+df.T47D.ATAC = get.raw.counts.interval(T47D.ATAC.peaks, direc, file.prefix = &#39;T47D_&#39;)
+save(df.T47D.ATAC, file = paste0(direc, &#39;df.T47D.ATAC.RData&#39;))
+load(&#39;df.T47D.ATAC.RData&#39;)
+
+df.T47D.ATAC = df.T47D.ATAC[,grep(&quot;DMSO&quot;, colnames(df.T47D.ATAC))]
+sample.conditions = factor(sapply(strsplit(sapply(strsplit(colnames(df.T47D.ATAC), &#39;T47D_&#39;), &#39;[&#39;, 2), &#39;_rep&#39;), &#39;[&#39;, 1))        
+rep = factor(sapply(strsplit(colnames(df.T47D.ATAC), &#39;_rep&#39;), &#39;[&#39;, 2))        
+batch = factor(round(as.numeric(rep)/4) + 1)
+deseq.counts.table.reps = DESeqDataSetFromMatrix(df.T47D.ATAC, cbind.data.frame(batch, sample.conditions), ~ batch + sample.conditions)
+colData(deseq.counts.table.reps)$condition&lt;-colnames(df.T47D.ATAC)
+dds.reps = DESeq(deseq.counts.table.reps)
+save(dds.reps, file = &quot;dds.reps.dmso.RData&quot;)
+
+#Differential accessibility in complete media
+res.deseq.complete.reps = results(dds.reps, contrast = c(&quot;sample.conditions&quot;, &quot;Complete_DMSO&quot;, &quot;Starved_DMSO&quot;))
+
+complete.activated = rownames(res.deseq.complete.reps)[res.deseq.complete.reps$log2FoldChange &gt; 0 &amp; res.deseq.complete.reps$padj &lt; 0.1 &amp; !is.na(res.deseq.complete.reps$padj)]
+complete.repressed = rownames(res.deseq.complete.reps)[res.deseq.complete.reps$log2FoldChange &lt; 0 &amp; res.deseq.complete.reps$padj &lt; 0.1 &amp; !is.na(res.deseq.complete.reps$padj)]
+complete.unchanged = rownames(res.deseq.complete.reps)[abs(res.deseq.complete.reps$log2FoldChange) &lt; .25 &amp; res.deseq.complete.reps$padj &gt; 0.5 &amp; !is.na(res.deseq.complete.reps$padj)]
+
+complete.activated.bed = cbind(sapply(strsplit(complete.activated, &#39;:&#39;), &#39;[&#39;, 1), sapply(strsplit(sapply(strsplit(complete.activated, &#39;:&#39;), &#39;[&#39;, 2), &#39;-&#39;), &#39;[&#39;, 1), sapply(strsplit(complete.activated, &#39;-&#39;), &#39;[&#39;, 2))
+write.table(complete.activated.bed, &quot;complete.activated.ATAC.bed&quot;, quote = FALSE, col.names = FALSE, row.names = FALSE, sep = &quot;\t&quot;)
+
+complete.repressed.bed = cbind(sapply(strsplit(complete.repressed, &#39;:&#39;), &#39;[&#39;, 1), sapply(strsplit(sapply(strsplit(complete.repressed, &#39;:&#39;), &#39;[&#39;, 2), &#39;-&#39;), &#39;[&#39;, 1), sapply(strsplit(complete.repressed, &#39;-&#39;), &#39;[&#39;, 2))
+write.table(complete.repressed.bed, &quot;complete.repressed.ATAC.bed&quot;, quote = FALSE, col.names = FALSE, row.names = FALSE, sep = &quot;\t&quot;)
+
+complete.unchanged.bed = cbind(sapply(strsplit(complete.unchanged, &#39;:&#39;), &#39;[&#39;, 1), sapply(strsplit(sapply(strsplit(complete.unchanged, &#39;:&#39;), &#39;[&#39;, 2), &#39;-&#39;), &#39;[&#39;, 1), sapply(strsplit(complete.unchanged, &#39;-&#39;), &#39;[&#39;, 2))
+write.table(complete.unchanged.bed, &quot;complete.unchanged.ATAC.bed&quot;, quote = FALSE, col.names = FALSE, row.names = FALSE, sep = &quot;\t&quot;)</code></pre>
+</div>
+<div id="de-novo-motif-identification" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> de novo motif identification</h2>
+<p>MEME/TOMTOM</p>
+<pre class="bash"><code>cd /Volumes/External/Users/TScott/ER_Antagonists/210628_ATAC/
+slopBed -b 50 -i T47D_peaks.bed -g ~/Box/GuertinLab/hg38/hg38.chrom.sizes &gt; T47D_peaks_summit_window_for_meme.bed
+sortBed -i T47D_peaks_summit_window_for_meme.bed &gt; T47D_peaks_summit_window_for_meme_sorted.bed
+mergeBed -i T47D_peaks_summit_window_for_meme_sorted.bed &gt; T47D_peaks_summit_window_for_meme_merged.bed
+
+cd ~/Box/GuertinLab/
+mkdir Antagonists_ATAC_meme
+cd Antagonists_ATAC_meme
+
+intersectBed -sorted -u -a /Volumes/External/Users/TScott/ER_Antagonists/210628_ATAC/T47D_peaks_summit_window_for_meme_merged.bed -b ../ER_Antagonists_R/complete.activated.ATAC.bed &gt; complete.activated.ATAC.summit.bed
+fastaFromBed -fi ../hg38/hg38.fa -bed complete.activated.ATAC.summit.bed -fo complete.activated.ATAC.fasta
+
+intersectBed -sorted -u -a /Volumes/External/Users/TScott/ER_Antagonists/210628_ATAC/T47D_peaks_summit_window_for_meme_merged.bed -b ../ER_Antagonists_R/complete.repressed.ATAC.bed &gt; complete.repressed.ATAC.summit.bed
+fastaFromBed -fi ../hg38/hg38.fa -bed complete.repressed.ATAC.summit.bed -fo complete.repressed.ATAC.fasta
+
+meme -oc complete.activated.ATAC_smaller_window_FDR_0.001_classic_meme_chip_output -nmotifs 15 -objfun classic -evt 0.01 -searchsize 0 -minw 8 -maxw 15 -revcomp -dna -markov_order 3 -maxsize 100000000 complete.activated.ATAC.fasta
+meme -oc complete.repressed.ATAC_smaller_window_FDR_0.001_classic_meme_chip_output -nmotifs 15 -objfun classic -evt 0.01 -searchsize 0 -minw 8 -maxw 15 -revcomp -dna -markov_order 3 -maxsize 100000000 complete.repressed.ATAC.fasta
+
+tomtom -no-ssc -o activated.tomtom_output -verbosity 1 -incomplete-scores -min-overlap 1 -dist ed -evalue -thresh 0.0005 complete.activated.ATAC_smaller_window_FDR_0.001_classic_meme_chip_output/meme.txt ~/Library/CloudStorage/Box-Box/GuertinLab/Motif_databases/tomtom_db/homer_uniprobe_jaspar_edited.txt
+tomtom -no-ssc -o repressed.tomtom_output -verbosity 1 -incomplete-scores -min-overlap 1 -dist ed -evalue -thresh 0.0005 complete.repressed.ATAC_smaller_window_FDR_0.001_classic_meme_chip_output/meme.txt ~/Library/CloudStorage/Box-Box/GuertinLab/Motif_databases/tomtom_db/homer_uniprobe_jaspar_edited.txt</code></pre>
+<p>FIMO.</p>
+<pre class="bash"><code>fimo --max-stored-scores 1000000 -o TEAD1_fimo ~/Box/GuertinLab/Motif_databases/individual_memes/TEAD1_jaspar_homer_uniprobe_jaspar_edited.txt_meme.txt ~/Box/GuertinLab/hg38/hg38.fa
+fimo --max-stored-scores 1000000 -o NFYB_fimo ~/Box/GuertinLab/Motif_databases/individual_memes/NFYB_jaspar_meme.txt ~/Box/GuertinLab/hg38/hg38.fa
+fimo --max-stored-scores 1000000 -o RUNX1_fimo ~/Box/GuertinLab/Motif_databases/individual_memes/RUNX_homer_uniprobe_jaspar_edited.txt_meme.txt ~/Box/GuertinLab/hg38/hg38.fa
+fimo --max-stored-scores 1000000 -o RUNX1_fimo ~/Box/GuertinLab/Motif_databases/individual_memes/RUNX_homer_uniprobe_jaspar_edited.txt_meme.txt ~/Box/GuertinLab/hg38/hg38.fa
+fimo --max-stored-scores 1000000 -o ERE_fimo ~/Box/GuertinLab/Motif_databases/individual_memes/ERE_meme.txt ~/Box/GuertinLab/hg38/hg38.fa
+fimo --max-stored-scores 1000000 -o FOXA1_fimo ~/Box/GuertinLab/Motif_databases/individual_memes/FOXA1_meme.txt ~/Box/GuertinLab/hg38/hg38.fa
+fimo --max-stored-scores 1000000 -o ZNF143_fimo ~/Box/GuertinLab/Motif_databases/individual_memes/GFY-Staf_meme.txt ~/Box/GuertinLab/hg38/hg38.fa
+fimo --max-stored-scores 1000000 -o OCT11_fimo ~/Box/GuertinLab/Motif_databases/individual_memes/OCT11_meme.txt ~/Box/GuertinLab/hg38/hg38.fa
+fimo --max-stored-scores 1000000 -o KLF1_fimo ~/Box/GuertinLab/Motif_databases/individual_memes/KLF1_meme.txt ~/Box/GuertinLab/hg38/hg38.fa
+
+intersectBed -sorted -u -a /Volumes/External/Users/TScott/ER_Antagonists/210628_ATAC/T47D_peaks_summit_window_for_meme_merged.bed -b ../ER_Antagonists_R/complete.unchanged.ATAC.bed &gt; complete.unchanged.ATAC.summit.bed
+
+intersectBed -u -a ERE_fimo/fimo.gff -b complete.activated.ATAC.summit.bed &gt; activated_ERE.gff
+intersectBed -u -a TEAD1_fimo/fimo.gff -b complete.repressed.ATAC.summit.bed &gt; repressed_TEAD1.gff
+intersectBed -u -a NFYB_fimo/fimo.gff -b complete.activated.ATAC.summit.bed &gt; activated_NFYB.gff
+intersectBed -u -a RUNX1_fimo/fimo.gff -b complete.activated.ATAC.summit.bed &gt; activated_RUNX1.gff
+intersectBed -u -a KLF1_fimo/fimo.gff -b complete.activated.ATAC.summit.bed &gt; activated_KLF1.gff
+
+intersectBed -v -b ERE_fimo/fimo.gff -a complete.activated.ATAC.summit.bed &gt; activated_no_ERE.gff
+intersectBed -v -b TEAD1_fimo/fimo.gff -a complete.repressed.ATAC.summit.bed &gt; repressed_no_TEAD1.gff
+intersectBed -v -b NFYB_fimo/fimo.gff -a complete.activated.ATAC.summit.bed &gt; activated_no_NFYB.gff
+intersectBed -v -b RUNX1_fimo/fimo.gff -a complete.activated.ATAC.summit.bed &gt; activated_no_RUNX1.gff
+intersectBed -v -b KLF1_fimo/fimo.gff -a complete.activated.ATAC.summit.bed &gt; activated_no_KLF1.gff
+
+intersectBed -u -b ERE_fimo/fimo.gff -a complete.activated.ATAC.summit.bed &gt; activated_with_ERE.gff
+intersectBed -u -b TEAD1_fimo/fimo.gff -a complete.repressed.ATAC.summit.bed &gt; repressed_with_TEAD1.gff
+intersectBed -u -b NFYB_fimo/fimo.gff -a complete.activated.ATAC.summit.bed &gt; activated_with_NFYB.gff
+intersectBed -u -b RUNX1_fimo/fimo.gff -a complete.activated.ATAC.summit.bed &gt; activated_with_RUNX1.gff
+intersectBed -u -b KLF1_fimo/fimo.gff -a complete.activated.ATAC.summit.bed &gt; activated_with_KLF1.gff</code></pre>
+<p>FIMO barcharts.</p>
+<pre class="r bg-info"><code>direc = &#39;~/Library/CloudStorage/Box-Box/GuertinLab/Antagonists_ATAC_meme/&#39;
+setwd(direc)
+
+library(lattice)
+
+bedTools.intersect &lt;- function(functionstring=&quot;/usr/local/anaconda3/bin/intersectBed&quot;,bed1,bed2,opt.string=&quot;&quot;) {
+  command=paste(functionstring, opt.string,&quot;-a&quot;, bed1,&quot;-b&quot;, bed2,&quot;&gt;&quot;,&#39;out.file.bed&#39;,sep=&quot; &quot;)
+  cat(command,&quot;\n&quot;)
+  try(system(command))
+  
+  res=read.table(&#39;out.file.bed&#39;,header=F, comment.char=&#39;&#39;)
+  
+  command3=paste(&#39;rm&#39;, &#39;out.file.bed&#39;)
+  cat(command3,&quot;\n&quot;)
+  try(system(command3))
+  
+  return(res)
+}
+
+PeaksWithMotif &lt;- function(motif)
+{
+  #Hard-coded name and bed files
+  name = sapply(strsplit(sapply(strsplit(motif, &quot;_fimo&quot;), &quot;[&quot;, 1), &quot;_meme/&quot;), &quot;[&quot;, 2)
+  act = &quot;complete.activated.ATAC.summit.bed&quot;
+  unc = &quot;complete.unchanged.ATAC.summit.bed&quot;
+  rep = &quot;complete.repressed.ATAC.summit.bed&quot;
+  act.intersect = bedTools.intersect(bed1 = act, bed2 = motif, opt.string = &quot;-wao&quot;)
+  ncol = ncol(act.intersect)
+  act.with = sum(as.numeric(act.intersect[,ncol]) &gt; 0)
+  act.without = sum(as.numeric(act.intersect[,ncol]) == 0)
+  unc.intersect = bedTools.intersect(bed1 = unc, bed2 = motif, opt.string = &quot;-wao&quot;)
+  ncol = ncol(unc.intersect)
+  unc.with = sum(as.numeric(unc.intersect[,ncol]) &gt; 0)
+  unc.without = sum(as.numeric(unc.intersect[,ncol]) == 0)
+  rep.intersect = bedTools.intersect(bed1 = rep, bed2 = motif, opt.string = &quot;-wao&quot;)
+  ncol = ncol(rep.intersect)
+  rep.with = sum(as.numeric(rep.intersect[,ncol]) &gt; 0)
+  rep.without = sum(as.numeric(rep.intersect[,ncol]) == 0)
+  result = cbind(c(act.with, act.without),
+                 c(unc.with, unc.without),
+                 c(rep.with, rep.without))
+  colnames(result) &lt;- c(&quot;Activated (in complete media)&quot;, &quot;Unchanged&quot;, &quot;Repressed (in complete media)&quot;)
+  rownames(result) &lt;- c(&quot;With motif&quot;, &quot;Without motif&quot;)
+  print(chisq.test(result))
+  #Can remove this line if you want the actual counts
+  result = 100*sweep(result, 2, colSums(result), &quot;/&quot;)
+  barplot(result, col = c(&quot;red&quot;, &quot;darkblue&quot;), main = name, legend.text = TRUE, args.legend = list(x = &quot;topright&quot;, bg = &quot;white&quot;))
+  return(result)
+}
+
+pdf(&quot;TEAD1_fimo_barchart.pdf&quot;)
+TEAD1 = PeaksWithMotif(&quot;~/Library/CloudStorage/Box-Box/GuertinLab/Antagonists_ATAC_meme/TEAD1_fimo/fimo.gff&quot;)
+dev.off()
+
+pdf(&quot;NFYB_fimo_barchart.pdf&quot;)
+NFYB = PeaksWithMotif(&quot;~/Library/CloudStorage/Box-Box/GuertinLab/Antagonists_ATAC_meme/NFYB_fimo/fimo.gff&quot;)
+dev.off()
+
+pdf(&quot;RUNX1_fimo_barchart.pdf&quot;)
+RUNX1 = PeaksWithMotif(&quot;~/Library/CloudStorage/Box-Box/GuertinLab/Antagonists_ATAC_meme/RUNX1_fimo/fimo.gff&quot;)
+dev.off()
+
+pdf(&quot;KLF1_fimo_barchart.pdf&quot;)
+KLF1 = PeaksWithMotif(&quot;~/Library/CloudStorage/Box-Box/GuertinLab/Antagonists_ATAC_meme/KLF1_fimo/fimo.gff&quot;)
+dev.off()
+
+pdf(&quot;ERE_fimo_barchart.pdf&quot;)
+ERE = PeaksWithMotif(&quot;~/Library/CloudStorage/Box-Box/GuertinLab/Antagonists_ATAC_meme/ERE_fimo/fimo.gff&quot;)
+dev.off()
+
+pdf(&quot;FOXA1_fimo_barchart.pdf&quot;)
+FOXA1 = PeaksWithMotif(&quot;~/Library/CloudStorage/Box-Box/GuertinLab/Antagonists_ATAC_meme/FOXA1_fimo/fimo.gff&quot;)
+dev.off()
+
+pdf(&quot;ZNF143_fimo_barchart.pdf&quot;)
+ZNF143 = PeaksWithMotif(&quot;~/Library/CloudStorage/Box-Box/GuertinLab/Antagonists_ATAC_meme/ZNF143_fimo/fimo.gff&quot;)
+dev.off()
+
+pdf(&quot;OCT11_fimo_barchart.pdf&quot;)
+OCT11 = PeaksWithMotif(&quot;~/Library/CloudStorage/Box-Box/GuertinLab/Antagonists_ATAC_meme/OCT11_fimo/fimo.gff&quot;)
+dev.off()</code></pre>
+</div>
+</div>
+<div id="integrative-analysis" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Integrative analysis</h1>
+<p>Measure baseline and change in expression of TFs in each family of hits from TOMTOM/FIMO.</p>
+<pre class="r bg-info"><code>setwd(&quot;~/Library/CloudStorage/Box-Box/GuertinLab/ER_Antagonists_R&quot;)
+
+library(lattice)
+library(DESeq2)
+library(ggplot2)
+
+x = read.table(&quot;Estrogen_treatment_PRO_gene_counts.txt&quot;, sep = &#39;\t&#39;, header = TRUE)
+rownames(x) = x[,1]
+x = x[,seq(2,to=ncol(x),by=2)]
+rep = factor(sapply(strsplit(colnames(x), &#39;_rep&#39;), &#39;[&#39;, 2)) 
+sample.conditions = factor(sapply(strsplit(sapply(strsplit(colnames(x), &#39;T47D_&#39;), &#39;[&#39;, 2), &#39;_rep&#39;), &#39;[&#39;, 1)) 
+deseq.df = DESeqDataSetFromMatrix(x, cbind.data.frame(rep, sample.conditions), ~ 0 + rep + sample.conditions)
+deseq.df = DESeq(deseq.df)
+
+res.deseq.estrogen = results(deseq.df, contrast = c(&quot;sample.conditions&quot;, &quot;Starved_Estrogen&quot;, &quot;Starved_DMSO&quot;))
+
+res.deseq.fulvestrant = results(deseq.df, contrast = c(&quot;sample.conditions&quot;, &quot;Complete_Fulvestrant&quot;, &quot;Complete_DMSO&quot;))
+
+res.deseq.complete = results(deseq.df, contrast = c(&quot;sample.conditions&quot;, &quot;Complete_DMSO&quot;, &quot;Starved_DMSO&quot;))
+
+#Comparisons
+categorize.deseq.df.mods &lt;- function(df, fdr = 0.05, log2fold = 0.0, treat = &#39;Estrogen&#39;) {
+  df.activated = df[df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &gt; log2fold,]
+  df.repressed = df[df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &lt; -log2fold,]
+  df.unchanged = df[df$padj &gt; 0.5 &amp; !is.na(df$padj) &amp; abs(df$log2FoldChange) &lt; 0.25,]
+  df.dregs = df[!(df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &gt; log2fold) &amp;
+                  !(df$padj &lt; fdr &amp; !is.na(df$padj) &amp; df$log2FoldChange &lt; -log2fold) &amp;
+                  !(df$padj &gt; 0.5 &amp; !is.na(df$padj) &amp; abs(df$log2FoldChange) &lt; 0.25), ]
+  df.unchanged$treat = paste(treat, &#39;Unchanged&#39;)
+  df.activated$treat = paste(treat, &#39;Activated&#39;)
+  df.repressed$treat = paste(treat, &#39;Repressed&#39;)
+  df.dregs$treat = paste(treat, &#39;All Other Genes&#39;)
+  df.effects.lattice =
+    rbind(df.activated,
+          df.unchanged,
+          df.repressed,
+          df.dregs)
+  df.effects.lattice$treat = factor(df.effects.lattice$treat)
+  df.effects.lattice$treat = relevel(df.effects.lattice$treat, ref = paste(treat, &#39;Activated&#39;))
+  df.effects.lattice$treat = relevel(df.effects.lattice$treat, ref = paste(treat, &#39;Repressed&#39;))
+  df.effects.lattice$treat = relevel(df.effects.lattice$treat, ref = paste(treat, &#39;Unchanged&#39;))
+  df.effects.lattice$treat = relevel(df.effects.lattice$treat, ref = paste(treat, &#39;All Other Genes&#39;))
+  return(df.effects.lattice)
+}
+
+fdr = 0.1
+log2fold = 0.0
+
+effects.lattice.estrogen = categorize.deseq.df.mods(res.deseq.estrogen, fdr = fdr, log2fold = log2fold, treat = &#39;Estrogen&#39;)
+effects.lattice.fulvestrant = categorize.deseq.df.mods(res.deseq.fulvestrant, fdr = fdr, log2fold = log2fold, treat = &#39;Fulvestrant&#39;)
+effects.lattice.complete = categorize.deseq.df.mods(res.deseq.complete, fdr = fdr, log2fold = log2fold, treat = &#39;Complete&#39;)
+
+gene.file = read.table(&quot;Homo_sapiens.GRCh38.104.bed&quot;)
+
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;ESR1&quot;],]
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;FOXA1&quot;],]
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;NR3C1&quot;],]
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;AR&quot;],]
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;PGR&quot;],]
+
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;TEAD1&quot;],]
+
+grep(&quot;KLF&quot;, gene.file$V5, value = TRUE)
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[grep(&quot;KLF&quot;, gene.file$V5)] &amp; effects.lattice.complete$treat != &quot;Complete Unchanged&quot; &amp; effects.lattice.complete$treat != &quot;Complete All Other Genes&quot;,]
+gene.file$V5[gene.file$V4 %in% rownames(effects.lattice.complete)[rownames(effects.lattice.complete) %in% gene.file$V4[grep(&quot;KLF&quot;, gene.file$V5)] &amp; effects.lattice.complete$treat != &quot;Complete Unchanged&quot; &amp; effects.lattice.complete$treat != &quot;Complete All Other Genes&quot;]]
+
+#KLF3 and 8 are most significant (other KLFs and SPs (and EGRs) have padj &gt; .01)
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;KLF3&quot;],]
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;KLF7&quot;],]
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;KLF8&quot;],]
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;KLF12&quot;],]
+
+grep(&quot;SP&quot;, gene.file$V5, value = TRUE)
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[grep(&quot;SP&quot;, gene.file$V5)] &amp; effects.lattice.complete$treat != &quot;Complete Unchanged&quot; &amp; effects.lattice.complete$treat != &quot;Complete All Other Genes&quot;,]
+gene.file$V5[gene.file$V4 %in% rownames(effects.lattice.complete)[rownames(effects.lattice.complete) %in% gene.file$V4[grep(&quot;SP&quot;, gene.file$V5)] &amp; effects.lattice.complete$treat != &quot;Complete Unchanged&quot; &amp; effects.lattice.complete$treat != &quot;Complete All Other Genes&quot;]]
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;SP3&quot;],]
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;SP4&quot;],]
+
+
+grep(&quot;NFY&quot;, gene.file$V5, value = TRUE)
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;NFYB&quot;],]
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;NFYC&quot;],]
+
+grep(&quot;GFY&quot;, gene.file$V5, value = TRUE)
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;GFY&quot;],]
+grep(&quot;Staf&quot;, gene.file$V5, value = TRUE)
+grep(&quot;THAP&quot;, gene.file$V5, value = TRUE)
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[grep(&quot;THAP&quot;, gene.file$V5)] &amp; effects.lattice.complete$treat != &quot;Complete Unchanged&quot; &amp; effects.lattice.complete$treat != &quot;Complete All Other Genes&quot;,]
+
+grep(&quot;RUNX&quot;, gene.file$V5, value = TRUE)
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[grep(&quot;RUNX&quot;, gene.file$V5)] &amp; effects.lattice.complete$treat != &quot;Complete Unchanged&quot; &amp; effects.lattice.complete$treat != &quot;Complete All Other Genes&quot;,]
+gene.file$V5[gene.file$V4 %in% rownames(effects.lattice.complete)[rownames(effects.lattice.complete) %in% gene.file$V4[grep(&quot;RUNX&quot;, gene.file$V5)] &amp; effects.lattice.complete$treat != &quot;Complete Unchanged&quot; &amp; effects.lattice.complete$treat != &quot;Complete All Other Genes&quot;]]
+
+#RUNX1 is expressed more highly and activated more
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;RUNX1&quot;],]
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;RUNX2&quot;],]
+
+grep(&quot;POU&quot;, gene.file$V5, value = TRUE)
+effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[grep(&quot;POU&quot;, gene.file$V5)] &amp; effects.lattice.complete$treat != &quot;Complete Unchanged&quot; &amp; effects.lattice.complete$treat != &quot;Complete All Other Genes&quot;,]
+gene.file$V5[gene.file$V4 %in% rownames(effects.lattice.complete)[rownames(effects.lattice.complete) %in% gene.file$V4[grep(&quot;POU&quot;, gene.file$V5)] &amp; effects.lattice.complete$treat != &quot;Complete Unchanged&quot; &amp; effects.lattice.complete$treat != &quot;Complete All Other Genes&quot;]]
+#Not the right motif
+#effects.lattice.complete[rownames(effects.lattice.complete) %in% gene.file$V4[gene.file$V5 == &quot;POU6F2&quot;],]
+
+effects.lattice.fulvestrant[rownames(effects.lattice.fulvestrant) %in% gene.file$V4[gene.file$V5 == &quot;TEAD1&quot;],]
+effects.lattice.estrogen[rownames(effects.lattice.estrogen) %in% gene.file$V4[gene.file$V5 == &quot;TEAD1&quot;],]
+
+effects.lattice.fulvestrant[rownames(effects.lattice.fulvestrant) %in% gene.file$V4[gene.file$V5 == &quot;NFYB&quot;],]
+effects.lattice.estrogen[rownames(effects.lattice.estrogen) %in% gene.file$V4[gene.file$V5 == &quot;NFYB&quot;],]
+
+effects.lattice.fulvestrant[rownames(effects.lattice.fulvestrant) %in% gene.file$V4[gene.file$V5 == &quot;NFYC&quot;],]
+effects.lattice.estrogen[rownames(effects.lattice.estrogen) %in% gene.file$V4[gene.file$V5 == &quot;NFYC&quot;],]
+
+effects.lattice.fulvestrant[rownames(effects.lattice.fulvestrant) %in% gene.file$V4[gene.file$V5 == &quot;RUNX1&quot;],]
+effects.lattice.estrogen[rownames(effects.lattice.estrogen) %in% gene.file$V4[gene.file$V5 == &quot;RUNX1&quot;],]
+
+effects.lattice.fulvestrant[rownames(effects.lattice.fulvestrant) %in% gene.file$V4[gene.file$V5 == &quot;RUNX2&quot;],]
+effects.lattice.estrogen[rownames(effects.lattice.estrogen) %in% gene.file$V4[gene.file$V5 == &quot;RUNX2&quot;],]
+
+effects.lattice.fulvestrant[rownames(effects.lattice.fulvestrant) %in% gene.file$V4[gene.file$V5 == &quot;KLF3&quot;],]
+effects.lattice.estrogen[rownames(effects.lattice.estrogen) %in% gene.file$V4[gene.file$V5 == &quot;KLF3&quot;],]
+
+effects.lattice.fulvestrant[rownames(effects.lattice.fulvestrant) %in% gene.file$V4[gene.file$V5 == &quot;KLF8&quot;],]
+effects.lattice.estrogen[rownames(effects.lattice.estrogen) %in% gene.file$V4[gene.file$V5 == &quot;KLF8&quot;],]
+
+hist(log(effects.lattice.complete$baseMean, base = 10), breaks = 50)
+nrow(effects.lattice.complete)
+sum(effects.lattice.complete$baseMean &gt; 300)
+
+ma.df = effects.lattice.complete
+levels(ma.df$treat) = c(&quot;Complete All Other Genes&quot;, &quot;Complete Unchanged&quot;, &quot;Complete Repressed&quot;, &quot;Complete Activated&quot;, &quot;ER&quot;, &quot;RUNX family&quot;, &quot;TEAD family&quot;)
+ma.df$treat[rownames(ma.df) %in% gene.file$V4[gene.file$V5 == &quot;ESR1&quot;]] &lt;- &quot;ER&quot;
+ma.df$treat[rownames(ma.df) %in% gene.file$V4[gene.file$V5 %in% paste0(&quot;RUNX&quot;, 1:3)]] &lt;- &quot;RUNX family&quot;
+ma.df$treat[rownames(ma.df) %in% gene.file$V4[gene.file$V5 %in% paste0(&quot;TEAD&quot;, 1:4)]] &lt;- &quot;TEAD family&quot;
+
+pdf(&quot;MA_plot_TF_classes.pdf&quot;)
+xyplot(ma.df$log2FoldChange ~ log(ma.df$baseMean, base=10),
+               groups=ma.df$treat,
+               col=c(&quot;grey90&quot;, &quot;grey90&quot;, &quot;grey60&quot;, &quot;grey60&quot;, &quot;black&quot;, &quot;red&quot;, &quot;blue&quot;),
+               main=&quot;TF expression in complete versus hormone starved media&quot;, 
+               scales=&quot;free&quot;, aspect=1, pch=20, cex=c(0.1, 0.1, 0.1, 0.1, 1, 1, 1),
+               ylab=expression(&quot;log&quot;[2]~&quot;PRO fold change&quot;), 
+               xlab=expression(&quot;log&quot;[10]~&quot;Mean of Normalized Counts&quot;),
+               key=list(space=&quot;right&quot;, 
+                        text = list(c(&quot;Differentially expressed&quot;, &quot;All other&quot;, &quot;ER&quot;, &quot;RUNX family&quot;, &quot;TEAD family&quot;)),
+                        points=list(pch=20, cex = 2, col = c(&quot;grey60&quot;, &quot;grey90&quot;, &quot;black&quot;, &quot;red&quot;, &quot;blue&quot;))),
+               par.settings=list(par.xlab.text=list(cex=1.1,font=2), 
+                                 par.ylab.text=list(cex=1.1,font=2)))
+dev.off()</code></pre>
 </div>
 
 
